@@ -9,6 +9,7 @@ import java.util.*;
 public class GameOfThrones {
 	public static void main(String[] args) throws Exception {
 		// Stores the given csv's into different object types.
+		sLinkedList<Character> allChar = allcharacterFile("data/characters.csv");
 		ArrayList alist = characterFile("data/characters_lineage.csv");
 		sLinkedList<Character> characters = (sLinkedList<Character>) alist.get(0);
 		sLinkedList<String> houseNamesOnly = (sLinkedList<String>) alist.get(1);
@@ -21,6 +22,11 @@ public class GameOfThrones {
 		sLinkedList<String> charNamesOnly = new sLinkedList<String>();
 		for (int d = 0; d < characters.getSize(); d++) {
 			charNamesOnly.addLast(characters.get(d).getName().toLowerCase());
+		}
+
+		sLinkedList<String> allcharNamesOnly = new sLinkedList<String>();
+		for (int d = 0; d < allChar.getSize(); d++) {
+			allcharNamesOnly.addLast(allChar.get(d).getName().toLowerCase());
 		}
 
 		Scanner scan = new Scanner(System.in);
@@ -63,12 +69,21 @@ public class GameOfThrones {
 					}
 				}
 
-				// Prints all character names and battles they are involved in
+			} else if (allcharNamesOnly.contains(input)) {
+				for (int a = 0; a < allChar.getSize(); a++) {
+					if (input.equals(allcharNamesOnly.get(a).toLowerCase())) {
+						System.out.println(allChar.get(a));
+						for (int b = 0; b < (allChar.get(a)).getBattles().getSize(); b++)
+							System.out.print(allChar.get(a).getBattles().get(b).toString());
+					}
+				}
+			
+			// Prints all character names and battles they are involved in
 			} else if (input.equals("all")) {
-				for (int c = 0; c < characters.getSize(); c++) {
-					System.out.println(characters.get(c).toString()); // Prints character's names first then battles
-					for (int b = 0; b < characters.get(c).getBattles().getSize(); b++)
-						System.out.print(characters.get(c).getBattles().get(b).toString());
+				for (int c = 0; c < allChar.getSize(); c++) {
+					System.out.println(allChar.get(c).toString()); // Prints character's names first then battles
+					for (int b = 0; b < allChar.get(c).getBattles().getSize(); b++)
+						System.out.print(allChar.get(c).getBattles().get(b).toString());
 				}
 				System.out.print('\n');
 				// Uses printTree to print the father's descendants and then
@@ -213,7 +228,7 @@ public class GameOfThrones {
 	}
 
 	/*
-	 * Parses a file (characters.csv) and splits each line into strings with comma
+	 * Parses a file (characters_lineage.csv) and splits each line into strings with comma
 	 * delimiters and makes character objects to store in a singly linked list with
 	 * their associated battles. Then, it is sorted by alphabetical order.
 	 */
@@ -262,6 +277,29 @@ public class GameOfThrones {
 		alist.add(houseNamesOnly);
 		alist.add(houseList);
 		return alist;
+	}
+
+	// Parses characters.csv to display all characters.
+	public static sLinkedList<Character> allcharacterFile(String filename) throws IOException {
+		sLinkedList<Character> characters = new sLinkedList<Character>();
+		sLinkedList<Battle> battles = battleFile("data/battles.csv");
+		String x = "";
+		Scanner inFile1 = new Scanner(new File(filename));
+		while (inFile1.hasNext()) {
+			x = inFile1.nextLine();
+			String[] x1 = x.split(",");
+			String i1 = x1[0];
+			String i2 = x1[1];
+			sLinkedList<Battle> i3 = indexofall(battles, i1);
+			characters.addLast(makeallCharacter(i1, i2, i3));
+		}
+		inFile1.close();
+		characters.sort();
+		return characters;
+	}
+
+	public static Character makeallCharacter(String i1, String i2, sLinkedList<Battle> i3) {
+		return new Character(i1, i2, i3);
 	}
 
 	/*
