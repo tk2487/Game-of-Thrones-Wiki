@@ -22,6 +22,12 @@ public class Character implements Comparable<Character> {
 		this.motherName = motherName;
 	}
 	
+	public Character (String name, String allegiances, sLinkedList<Battle> battles) {
+		this.name = name;
+		this.allegiances = allegiances;	
+		this.battles = battles;
+	}
+	
 	public Character(String name) {
 		this.name = name;
 	}
